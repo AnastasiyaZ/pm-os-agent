@@ -10,15 +10,15 @@ This is a **template repo**. Click **Use this template → Create a new reposito
 
 | # | Deliverable | Module | Status | File |
 |---|---|---|---|---|
-| 1 | **Working agent demo** (real run screenshots; link optional) | Built across labs | ☐ | `06-autonomy/prototype.md` |
-| 2 | **Loop Spec** | M2 | ☐ | `02-loop-design/loop-spec.md` |
-| 3 | **Orchestration Map** | M3 | ☐ | `03-orchestration/orchestration-map.md` |
-| 4 | **Insights: build process** | M6 | ☐ | `06-autonomy/build-insights.md` |
-| 5 | **Insights: bounds, trust & autonomy strategy** | M6 | ☐ | `06-autonomy/governance-and-strategy.md` |
+| 1 | **Working agent demo** (real run screenshots; link optional) | Built across labs | ◑ draft (happy-path trace captured) | `06-autonomy/prototype.md` |
+| 2 | **Loop Spec** | M2 | ◑ draft | `02-loop-design/loop-spec.md` |
+| 3 | **Orchestration Map** | M3 | ◑ draft | `03-orchestration/orchestration-map.md` |
+| 4 | **Insights: build process** | M6 | ☐ scaffolded — needs your voice | `06-autonomy/build-insights.md` |
+| 5 | **Insights: bounds, trust & autonomy strategy** | M6 | ◑ draft | `06-autonomy/governance-and-strategy.md` |
 
 ## The agent in one sentence
 
-_What does your agent do, for whom, and where is the agent line, what does it decide vs. what stays human?_
+Cortex turns raw project state (activity, roadmap, past updates, norms) into a **drafted** leadership status update and a **queued** backlog proposal for a PM to clear — it drafts and judges *below* the line, everything that *commits* (posts, approves) stays *above* it with the human, and it *stops* on machinery (caps and counters), not on the model deciding it's done.
 
 ## Build & demo
 
@@ -28,7 +28,7 @@ _What does your agent do, for whom, and where is the agent line, what does it de
 
 ## Where it sits on the Trust Ladder
 
-_shadow · assisted · supervised · bounded-autonomous · autonomous, which rung today, and what eval evidence would let it climb the next one?_
+**Today: Supervised** — Cortex drafts and queues; a human reviews at the HITL checkpoint before anything commits. With no publish tool, it *structurally cannot* climb on its own. **To reach Bounded-autonomous** it needs eval evidence, not a calendar date: a labeled eval harness (≥24 known-bad cases), critic false-pass ≤5%, confidentiality leak rate = 0 with a dedicated pre-publish scan, and 100% escalation-correctness. The company-wide *post* (#8) stays human regardless. Full argument in `06-autonomy/governance-and-strategy.md`.
 
 ---
 

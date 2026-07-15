@@ -4,28 +4,39 @@
 
 ## What it does
 
-_One paragraph: the agent in action, end to end._
+Cortex takes one PM task brief — "assemble this week's leadership status update for Northstar, and propose next sprint's stories" — and runs a transparent, bounded loop: it pulls the project, its recent engineering activity, past updates for tone, the roadmap, and team norms; drafts a grounded status update; queues a capped batch of backlog stories for approval; submits the draft to an independent critic; and stops at a human-in-the-loop checkpoint with **nothing posted, committed, or created.** In the captured happy-path run it batched 5 read calls, proposed 5 stories (well under the 10 cap), passed the critic on the first try, and finished for ≈ **$0.066** — about 13% of the $0.50 cost cap.
 
 ## How you built it
 
-- **Coding agent:** _which one you directed (Claude Code / Cursor / Codex)_
-- **Model + bounds:** _model used, max iterations, cost cap, queue cap_
-- **Repo / config:** _path to your build in `00-build/`_
-- **Live link:** _[shareable URL, optional bonus]_
+- **Coding agent:** Claude Code (directed the OpenAI→Anthropic port of the starter, verified the model ID/pricing, ran the fixture, and wrote up the deliverables).
+- **Model + bounds:** `claude-sonnet-4-6` ($3/$15 per 1M in/out); `MAX_ITERATIONS=8`, `MAX_REVISIONS=2`, `COST_CAP_USD=0.50`, `MAX_QUEUE_ITEMS=10`. Bounds enforced outside the model in `agent.py` / `tools.py`.
+- **Repo / config:** `00-build/` — `agent.py` (loop), `critic.py` (validator), `tools.py` (7 tools, no publish tool), `prompts.py` (agent + critic system prompts), `fixtures/` (mock data).
+- **Live link:** _[optional]_
 
 ## Screenshots (required, collected M2 to M6)
 
 Real screenshots of *your* Cortex running. These are the `00-build/CORTEX-ANATOMY.md` set and they are required, a link alone is not enough.
 
-| # | Screenshot | What it shows | From |
-|---|---|---|---|
-| 1 | _[img]_ | happy-path run: a real drafted update + the HITL checkpoint (queued, not posted) | M2 |
-| 2 | _[img]_ | the critic rejecting a bad draft (revise/block) | M3 |
-| 3 | _[img]_ | a grounded update citing pulled activity + a caught hallucination | M4 |
-| 4 | _[img]_ | jailbreak refused + escalated | M5 |
-| 5 | _[img]_ | an iteration/cost/queue bound halting a runaway | M5 |
-| 6 | _[img]_ | end-to-end run | M6 |
+| # | Screenshot | What it shows | From | Status |
+|---|---|---|---|---|
+| 1 | _[img]_ | happy-path run: a real drafted update + the HITL checkpoint (queued, not posted) | M2 | ✅ **captured** — `00-build/happy-run.txt` |
+| 2 | _[img]_ | the critic rejecting a bad draft (revise/block) | M3 | ⏳ needs a seeded-bad run |
+| 3 | _[img]_ | a grounded update citing pulled activity + a caught hallucination | M4 | ⏳ partial — happy run shows the "Data I relied on" citation table |
+| 4 | _[img]_ | jailbreak refused + escalated | M5 | ⏳ run `agent.py jailbreak` |
+| 5 | _[img]_ | an iteration/cost/queue bound halting a runaway | M5 | ⏳ run `agent.py missing-data` or force the queue cap |
+| 6 | _[img]_ | end-to-end run | M6 | ⏳ |
+
+**Evidence captured so far:** the happy-path trace (`00-build/happy-run.txt`) covers screenshot #1 in full — the 5 tool pulls, the `queued_for_approval` story batch, the drafted update with a "Data I relied on — check me" citation table, the critic's `pass` verdict with 10 reasons, and the HITL checkpoint banner stating nothing was posted.
 
 ## How to run it
 
-_Minimal steps for someone to reproduce the demo (env vars, and the command or the coding-agent prompt you used)._
+```bash
+cd 00-build
+python -m venv .venv && ./.venv/bin/pip install -r requirements.txt
+# add ANTHROPIC_API_KEY to .env (copy from .env.example)
+./.venv/bin/python agent.py happy          # happy path (this is the captured run)
+./.venv/bin/python agent.py missing-data   # the stuck/escalate case
+./.venv/bin/python agent.py jailbreak       # the prompt-injection refusal case
+```
+
+Each run prints the full trace to the terminal; pipe through `| tee happy-run.txt` to save it.
