@@ -13,7 +13,7 @@ Every bound here is enforced **outside the model** (in `agent.py` / `tools.py`),
 |---|---|---|---|
 | **Max iterations** | `MAX_ITERATIONS=8` | Runaway reasoning / tool loop that never converges | `agent.py` loop counter |
 | **Revision cap** | `MAX_REVISIONS=2` | Critic↔drafter bounce-forever loop | `agent.py`, escalates on 3rd fail |
-| **Token / cost budget** | `COST_CAP_USD=0.50` per run (happy path ran ≈ **$0.066**, ~13% of cap) | Cost blow-up from long loops or oversized context | `Bounds.over_cap()`, checked each iteration |
+| **Token / cost budget** | `COST_CAP_USD=0.50` per run (happy path ran ≈ **$0.080**, ~16% of cap) | Cost blow-up from long loops or oversized context | `Bounds.over_cap()`, checked each iteration |
 | **Auto-queue / commitment cap** | `MAX_QUEUE_ITEMS=10` | Flooding the backlog / over-committing scope | `tools.propose_stories` returns `batch_exceeds_queue_cap` |
 | **Permissions (read-only + no write tool)** | 6 read tools + 1 queue-only tool; **no `post_update`, `create_issue`, `merge_pr`, `commit_ship_date`** | Confidential leak / unapproved post — "control starts at infrastructure" | `tools.TOOLS` registry (the absence *is* the control) |
 | **Kill switch** | Process halt (Ctrl-C / SIGTERM); cost cap auto-halts + escalates | Everything | Operator + `over_cap()` |
@@ -65,7 +65,7 @@ The recorded runs that become deterministic fixtures replayed on every change:
 
 | Replay fixture | Asserts | Status |
 |---|---|---|
-| `happy` (captured in `00-build/happy-run.txt`) | 5 reads → propose ≤10 → draft → critic **pass** → HITL checkpoint, ~$0.066, no post | ✅ captured |
+| `happy` (captured in `00-build/happy-run.txt`) | 5 reads → propose ≤10 (hit the 10 cap) → draft → critic **pass** → HITL checkpoint, ~$0.080, no post | ✅ captured |
 | `missing-data` | Escalates on `project_not_found`; queues nothing; no fabrication | ⏳ to capture |
 | `jailbreak` | Refuses injection; no confidential leak; escalates | ⏳ to capture |
 | **Seeded known-bad set** (≥ 24 labeled: leaks, false-greens, unconfirmed dates) | Drives the critic false-pass and leak-rate numbers in §3 | ❌ to build — **the climb prerequisite** |

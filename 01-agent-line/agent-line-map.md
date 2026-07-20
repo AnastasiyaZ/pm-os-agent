@@ -1,7 +1,7 @@
 # Agent Line Map: Cortex PM Chief-of-Staff Agent
 
 > Module 1 · The Agent Line
-> Scored against the happy-path run (`python agent.py happy`, run cost ≈ $0.066, critic verdict *pass*). Every unit below maps to an observed point in that trace or a line in `agent.py` / `critic.py`.
+> Scored against the happy-path run (`python agent.py happy`, run cost ≈ $0.080, critic verdict *pass*). Every unit below maps to an observed point in that trace or a line in `agent.py` / `critic.py`.
 
 ## The agent in one sentence
 

@@ -8,25 +8,38 @@
 
 ## 1. Trigger & loop type
 
-**Chosen type: goal loop**, wrapped by a **cron** trigger.
+**Type: goal loop. Triggers: cron + hook.** These are two different axes — the trigger answers *when it fires*; "goal vs. fixed pipeline" answers *how it runs once fired* — so both belong in the answer, on different lines. It is not "hook+cron instead of goal."
 
-A Monday-morning cron fires the weekly leadership update; a **hook** on a new PRD version is the natural second trigger for the story-proposal path. The inner loop itself is a *goal* loop: it iterates (pull → draft → validate → revise) until an explicit definition of done is met or a bound trips — it is not a fixed pipeline. This matches the observed run: the model chose to batch 5 reads, then draft, then submit to the critic, with no hard-coded step order.
+> **Justification (≤2 sentences):** A weekly leadership update is a scheduled deliverable, so a **cron (Monday 9:00am)** owns it, while a **hook** on inbound tasks / new-PRD versions handles event-driven work like story proposals; the same daily cron also runs a morning **sweep** as a reliability backstop, re-checking for any inbound task a dropped hook event missed (idempotent, so it never re-processes work the hook already handled). It is a *goal* loop rather than a fixed pipeline because "done" is defined by an independent validator passing, not by a fixed step count — the agent chooses which tools to call to get there.
+
+- **Cron — primary for the weekly update.** The status update is due every week regardless of whether anyone asks, so the cron *owns* it. Cron here is not a safety net; it is why the single most important artifact ships on time.
+- **Hook — primary for event-driven work.** Story proposals and ad-hoc briefs make sense *when* a PRD lands or a PM drops a request, so a hook on an inbound task / new-PRD version triggers those.
+- **Daily-sweep cron — secondary, reliability backstop.** The same daily cron re-checks for any inbound task a dropped hook event missed. This is a bonus, not cron's reason to exist, and it carries a real requirement: it must be **idempotent** — dedupe against already-processed tasks so it never re-queues stories or regenerates an update the hook already produced.
+- **Not heartbeat.** Heartbeat suits latency-sensitive, continuously-changing state (poll every few minutes, react fast). Cortex is the opposite — low-volume, days of slack — so a tight poll would burn cost for zero benefit. Correctly excluded.
+
+Once triggered, the inner loop iterates (pull → draft → validate → revise) until the definition of done is met or a bound trips — no hard-coded step order. The observed run confirms this: the model batched 5 reads, drafted, then submitted to the critic on its own initiative.
+
+**Honesty note:** none of these triggers exist in `agent.py` today — the code is a single manual `run(which)` invoked by hand (`python agent.py happy`). The trigger design is spec-level intent; the scheduler is not built.
 
 ## 2. Goal / definition of done
 
 **Outcome the loop owns:** a leadership status update *grounded in real pulled activity*, plus (when asked) a backlog proposal *queued* for review — with **nothing posted, committed, or created**.
 
-**Validation that says "done":** the independent critic (M3) returns `verdict: "pass"` on the drafted output. Done is not "the model stopped talking" — it's "an independent check that never saw the drafting context confirmed the output is grounded, norm-compliant, leak-free, and commits nothing." On the happy path this fired on the first critique (3 loop iterations, ≈ $0.066).
+**What says "done":** the independent critic (M3) returns `verdict: "pass"` on the drafted output, which is then surfaced at the HITL checkpoint. Done is never "the model stopped talking" — it is "an independent check that never saw the drafting context confirmed the output is grounded, norm-compliant, leak-free, and commits nothing." On the happy path this fired on the first critique (≈ $0.080).
 
 ## 3. Stop conditions
 
 | Condition | What it looks like | What happens |
 |---|---|---|
-| **Success** | Critic returns `pass` | HITL checkpoint: update + any queued stories surfaced for human review; loop returns; nothing posted |
-| **Stuck / give up** | `MAX_REVISIONS=2` exhausted (critic keeps rejecting), or `MAX_ITERATIONS=8` reached, or `project_not_found` on required data | Escalate to a human with what was tried; loop halts. `ESCALATE:` output per the system prompt |
-| **Escalate to human** | Jailbreak detected, unconfirmed date demanded, batch > queue cap, or cost cap hit | HITL checkpoint / escalation (from agent-line-map #7–#8); machinery trips outside the model |
+| **Success** | Critic returns `verdict: "pass"` | HITL checkpoint: update + any queued stories surfaced for human review; loop returns; nothing posted |
+| **Give up / stuck** | `MAX_REVISIONS=2` exhausted (critic keeps rejecting), or `MAX_ITERATIONS=8` reached, or `COST_CAP_USD=0.50` hit | Halt instead of spinning; escalate to a human with what was tried. `REVISION CAP` / `MAX ITERATIONS` / `BOUND TRIPPED` banner |
+| **Escalate to human** | Required data missing (`project_not_found`), jailbreak detected, an unconfirmed date / Sev-1 / over-cap batch (`batch_exceeds_queue_cap`) would be required | Emit `ESCALATE:` with what was tried; commit nothing, fabricate nothing (from agent-line-map #7–#8) |
 
 The key design property: **all three stop conditions are enforced outside the model.** The agent never decides it has looped enough — a counter, a cap, or a missing-data error decides for it.
+
+### Self-validation (required, because this is a goal loop)
+
+A goal loop needs something other than the model's own say-so to decide "done" — otherwise it stops whenever it *feels* finished. That something is the independent critic (`critic.py`): a **separate model call** with **context isolation** — it sees only the `source_log` + the proposed output, never the drafting conversation — returning strict JSON `{verdict, reasons}` against six checks: correct project + real activity, every claim traceable, norms compliance, nothing posted/committed/created, jailbreak refused, and bound-trips treated as *correct*. It **fails closed**: an unparseable critic response scores `fail`, never `pass`. This is what makes "done" mean *validated*, not merely *stopped*.
 
 ## 4. State
 

@@ -20,3 +20,6 @@ __pycache__/
 *.local.json
 /traces/
 /runs/
+
+# Editor / workspace config
+.obsidian/
