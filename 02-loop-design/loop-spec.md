@@ -25,7 +25,7 @@ Once triggered, the inner loop iterates (pull → draft → validate → revise)
 
 **Outcome the loop owns:** a leadership status update *grounded in real pulled activity*, plus (when asked) a backlog proposal *queued* for review — with **nothing posted, committed, or created**.
 
-**What says "done":** the independent critic (M3) returns `verdict: "pass"` on the drafted output, which is then surfaced at the HITL checkpoint. Done is never "the model stopped talking" — it is "an independent check that never saw the drafting context confirmed the output is grounded, norm-compliant, leak-free, and commits nothing." On the happy path this fired on the first critique (≈ $0.080).
+**What says "done":** the independent critic (M3) returns `verdict: "pass"` on the drafted output, which is then surfaced at the HITL checkpoint. Done is never "the model stopped talking" — it is "an independent check that never saw the drafting context confirmed the output is grounded, norm-compliant, leak-free, and commits nothing." On the happy path this fired on the first critique (a few cents, well under the $0.50 cap).
 
 ## 3. Stop conditions
 
@@ -49,13 +49,15 @@ A goal loop needs something other than the model's own say-so to decide "done" �
 
 ## 5. The five things every loop needs
 
-| Component | For Cortex |
-|---|---|
-| **Work tree** (isolated workspace per run) | The per-run `messages` + `source_log`; a fresh `anthropic.Anthropic()` client and `Bounds()` object per `run()`. No shared mutable state across runs. |
-| **Skills** (reusable capabilities) | Draft-a-status-update and propose-backlog-stories, expressed in `CORTEX_SYSTEM` + the `propose_stories` tool. |
-| **Plugins / connectors** (tools & access) | 6 read tools (`get_project`, `get_activity`, `search_past_updates`, `get_roadmap`, `get_norms`) + 1 queue-only tool (`propose_stories`). All read-only over `fixtures/`; **no world-acting tool exists.** |
-| **Subagents** (delegated / validation) | The independent critic (`critic.review`) — a separate model call with its own system prompt that never sees the drafting messages. Full topology → `03-orchestration/orchestration-map.md`. |
-| **State tracking** | `Bounds` (running cost), the iteration counter (`step`), and the `revisions` counter — the three that trip the stop conditions. |
+Two components are always-on and locked today (**connectors, state**). Of the three that scale with autonomy, Cortex already needs one — the **critic subagent** was load-bearing from day one — so it is locked too; **skills** and **work tree** are genuinely *not needed yet* and get a one-line reason, to be fleshed out as later modules add autonomy.
+
+| Component | Status | For Cortex |
+|---|---|---|
+| **Plugins / connectors** (tools & access) | 🔒 **Locked** | **5** model-callable read tools (`get_project`, `get_activity`, `search_past_updates`, `get_roadmap`, `get_norms`) + **1** queue-only tool (`propose_stories`) = 6 tools the model can call. (`get_task` is in `tools.py` but *not* in `TOOL_SCHEMAS` — the harness calls it to load the brief, so it's infrastructure, not a model connector.) All read-only or queue-only over `fixtures/`; **no world-acting tool exists** — read + draft/queue only, never send. This is the **M1 agent line made real.** |
+| **State tracking** | 🔒 **Locked** | **Per-run only.** *Within* a run, across iterations: the `messages` list, the `source_log` the critic audits, the `step` and `revisions` counters, and `Bounds.cost`. **Scope:** per-run, per-project (the brief names one project). **Cross-run retention: zero** — each weekly update starts clean; there is no persistent "which threads handled / where in the approval" state, because the HITL checkpoint *ends* the run and approval happens out-of-band. (Contrast the lecture's "retained 30 days" — Cortex deliberately retains nothing yet.) |
+| **Subagents** (delegated / validation) | 🔒 **Locked** *(exception to the "defer" default)* | The independent critic (`critic.review`) — a separate model call with its own system prompt that **never sees the drafting messages**, and **fails closed**. Not deferred: needed from day one because a drafter can't grade its own homework. Full topology → `03-orchestration/orchestration-map.md`. |
+| **Skills** (reusable capabilities) | ◻️ **Not needed yet** | Cortex has exactly one task shape (weekly update + story proposal), expressed inline in `CORTEX_SYSTEM` — there is no library of reusable, composable capabilities to factor out until it handles multiple task types. |
+| **Work tree** (isolated workspace per run) | ◻️ **Not needed yet** | Cortex runs one task per invocation, single-threaded, with state purged each run — so there is no concurrent second thread to isolate. The per-run freshness (new client + new `Bounds()`) already gives the single-threaded version of the guarantee; a real work tree earns its keep only once runs overlap (several projects in flight at once). |
 
 ## 6. Context plan
 

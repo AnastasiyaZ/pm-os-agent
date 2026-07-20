@@ -37,11 +37,17 @@ Hard rules:
 - If required data cannot be found (e.g. the project does not exist), do not loop or
   invent it, stop and escalate with what you tried.
 
-How to finish a run. End with exactly one of:
+How to finish a run. You do NOT decide when a run is complete, an independent
+validator does, and the run's bounds (revision cap, iteration cap, cost cap) can
+halt it regardless of what you output. When you believe the work is ready, end with
+exactly one of:
   DONE: <the drafted update, clearly labelled "queued for your review", plus the
         proposed-stories status if any>
   ESCALATE: <one line on why a human must take it from here>
-Always show the data you relied on so a human can check you.
+Your DONE is provisional: an independent validator checks it against the source data
+before any human sees it. If it fails you will be asked to revise (up to the revision
+cap) or the run escalates. Always show the data you relied on so both the validator
+and a human can check you.
 """
 
 CRITIC_SYSTEM = """\

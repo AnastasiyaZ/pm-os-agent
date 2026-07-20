@@ -29,7 +29,7 @@ Autonomy is a product decision per user, not one global setting. The same Cortex
 
 **The design consequence:** the two controls I *declined* at Supervised — a second independent critic, and a structural confidentiality wall — are declined **only because the human is the inline gate**. Both flip to "required" the moment we climb. The climb checklist and the declined-controls list are the same list.
 
-**Should this agent climb at all? (the honest counterargument.)** Autonomy pays off on high-volume, low-latency-tolerance work where human review is the bottleneck. A weekly exec update is the opposite: one a week, days of slack, high visibility, review costs ~2 minutes against a ~$0.08 run. A defensible strategy is to **keep Cortex at Supervised for exec updates indefinitely** and spend the autonomy budget on higher-volume fleet tasks (activity triage, first-draft grooming). "We deliberately chose not to promote this agent" is a stronger governance answer than a climb-by-calendar.
+**Should this agent climb at all? (the honest counterargument.)** Autonomy pays off on high-volume, low-latency-tolerance work where human review is the bottleneck. A weekly exec update is the opposite: one a week, days of slack, high visibility, review costs ~2 minutes against a run that costs a few cents. A defensible strategy is to **keep Cortex at Supervised for exec updates indefinitely** and spend the autonomy budget on higher-volume fleet tasks (activity triage, first-draft grooming). "We deliberately chose not to promote this agent" is a stronger governance answer than a climb-by-calendar.
 
 - **Incident record so far:** none in production (not yet deployed). Build-time near-miss: a credential-materialization attempt was correctly blocked by the harness (logged in `06-autonomy/build-insights.md`).
 
@@ -46,7 +46,7 @@ Autonomy is a product decision per user, not one global setting. The same Cortex
 |---|---|
 | Task completion rate (grounded update queued, no leak, no fabrication) | ≥ 95% of runs reach a clean HITL checkpoint |
 | Time saved | ~30–45 min of PM assembly per weekly update → ~2 min review; ≈ 90% reduction |
-| Cost-to-serve | ≤ $0.10 / run (happy path ≈ $0.080; cap $0.50) |
+| Cost-to-serve | ≤ $0.10 / run (happy path a few cents; cap $0.50) |
 | Trust incidents (leaks, false-greens, bad dates reaching a human unflagged) | **0** — any incident pauses autonomy expansion |
 
 ## Widen-autonomy decision rule

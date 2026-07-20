@@ -69,4 +69,4 @@ Plain in-process function calls — no MCP/A2A protocol (unnecessary at this sca
 
 ## 7. Cost & latency budget
 
-Coordination price is one extra model call per completed run (the critic). On the happy path: total ≈ **$0.080** including critic spend, which is a small fraction of the run. Latency is one added round-trip at the end. Cheap enough that the independent-validation benefit clearly wins — but note the cost roughly **triples** if the draft bounces the full `MAX_REVISIONS=2` (each revision = another drafter call + another critic call). That range, not the happy-path floor, is what the $0.50 cap in M5 must cover.
+Coordination price is one extra model call per completed run (the critic). On the happy path: total is **a few cents** including critic spend — well under the $0.50 cap, a small fraction of the run. Latency is one added round-trip at the end. Cheap enough that the independent-validation benefit clearly wins — but note the cost roughly **triples** if the draft bounces the full `MAX_REVISIONS=2` (each revision = another drafter call + another critic call). That range, not the happy-path floor, is what the $0.50 cap in M5 must cover.
