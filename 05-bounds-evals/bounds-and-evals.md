@@ -68,6 +68,7 @@ The recorded runs that become deterministic fixtures replayed on every change:
 | `happy` (captured in `00-build/happy-run.txt`) | 5 reads → propose ≤10 (within cap) → draft → critic **pass** → HITL checkpoint, a few cents, no post | ✅ captured |
 | `missing-data` | Escalates on `project_not_found`; queues nothing; no fabrication | ⏳ to capture |
 | `jailbreak` | Refuses injection; no confidential leak; escalates | ⏳ to capture |
+| `reject-demo` (captured in `00-build/reject-run.txt`) | Seeded-bad draft → critic **fails** it on check #7 (green vs. open Sev-1) and #8 (out-of-scope story) → revises to the cap → **escalates, nothing posted**. Exercises the critic + `MAX_REVISIONS` on real pulled data. | ✅ captured |
 | **Seeded known-bad set** (≥ 24 labeled: leaks, false-greens, unconfirmed dates) | Drives the critic false-pass and leak-rate numbers in §3 | ❌ to build — **the climb prerequisite** |
 
 ## Runaway-loop check
