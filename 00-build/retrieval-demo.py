@@ -15,11 +15,28 @@ THE DISTINCTION (from the M4 lecture), grounded in THIS build:
 
 THE PROOF (agent.py's M4 task: "withhold one source, show the hallucination caught"):
   We feed the REAL critic ONE fixed draft twice — once against a source_log that
-  includes get_activity, once with get_activity WITHHELD. The same "activation rate
-  41%" claim flips from grounded (pass) to invented (fail). That flip IS the
-  retrieve-vs-long-context distinction made real: pull the source and cite it, or the
-  claim cannot stand. The long-context brief is present in BOTH — it is never the
-  thing withheld, because it is not retrieved.
+  includes get_activity, once with get_activity WITHHELD. The draft is deliberately
+  COMPLETE and otherwise fully grounded — evidence-based green call (get_project),
+  reports the open issue, proposes only in-scope PRD stories (queued via a real
+  propose_stories call present in BOTH arms) — so the ONLY thing that can sink it is
+  whether its activity-derived claims (PRs #812/#815 and activation 41%/39%) trace to
+  pulled data. With get_activity present they do → PASS. With it withheld the same
+  claims trace to nothing → FAIL on check #2. That PASS→FAIL flip IS the retrieve-vs-
+  long-context distinction made real: pull the source and cite it, or the claim cannot
+  stand. The long-context brief is present in BOTH — it is never the thing withheld,
+  because it is not retrieved.
+
+  Design note (why this is a clean control): an earlier draft here was merely a PARTIAL
+  update (no stories, no #818), so the critic correctly failed it on completeness in
+  BOTH arms — no flip. The single variable wasn't isolated. This draft removes every
+  non-retrieval failure mode, leaving get_activity as the ONLY difference between arms.
+  The critic is non-deterministic; the harness prints whether the expected flip was
+  actually observed rather than assuming it.
+
+  Observed (trace: m4-retrieval-demo-run.txt): FLIP OBSERVED — 3a PASS (all activity
+  claims trace to get_activity; green call justified; stories in-scope), 3b FAIL
+  (PRs #812/#815 + activation 41%/39% "do not appear anywhere in the pulled source
+  data … invented", caught on check #2). Run cost ~= $0.02.
 
 Nothing here reimplements the loop or the validator: critic.review(), the real tools,
 and the real cost accounting are imported from the shipping build. Only the source_log
@@ -39,30 +56,66 @@ from agent import MODEL, PRICE_IN, PRICE_OUT, Bounds, banner
 from critic import review
 
 
-# One fixed draft. Deliberately PLAIN markdown (the ornate happy-path draft once tripped
-# the critic's JSON parser). Every factual claim here — the two merged PRs and the
-# activation metric — originates in get_activity, so withholding that ONE tool ungrounds
-# all of them. The "Data I relied on" lines make the citation explicit, which is exactly
-# what turns into a *fabricated* citation when the source was never retrieved.
+# One fixed draft, deliberately COMPLETE so the ONLY thing that can sink it is whether
+# its activity-derived claims trace to pulled data. It makes the evidence-based green
+# call (get_project: on_track, no flags), reports the open issue #818, and proposes only
+# in-scope PRD stories (matching the real propose_stories call in the source_log) — the
+# two non-retrieval failure modes an earlier draft here tripped. What remains
+# retrieval-dependent is the merged PRs (#812/#815) and the activation metric (41%/39%),
+# which originate ONLY in get_activity — so withholding that one tool ungrounds exactly
+# those claims and nothing else. Plain markdown (the ornate happy-path draft once tripped
+# the critic's JSON parser). The "Data I relied on" lines make the citation explicit —
+# which is exactly what becomes a *fabricated* citation when the source was never pulled.
 DRAFT = """\
 DONE: (queued for your review — nothing posted)
 
 Northstar (P-NORTH) — weekly leadership status: GREEN.
-- Shipped this week: PR #812 (activation checklist UI) and PR #815 (step-completion
-  instrumentation).
-- Activation rate rose to 41%, up from 39% week over week.
-- No open Sev-1s and no launch-hold flags.
+Status call is evidence-based: project is on_track, no flags, no open Sev-1, no
+launch-hold (get_project).
+
+Shipped this week:
+- PR #812 (activation checklist UI) merged 2026-06-29.
+- PR #815 (step-completion instrumentation) merged 2026-06-30.
+
+Key metric: activation rate 41%, up from 39% week over week.
+
+Open items (honest picture):
+- Issue #818 "Empty-state copy needs review" — open, severity normal; no eng blocker.
+  Copy owner needed before the empty-state story can ship. Not a status-changer.
+
+Proposed next-sprint stories (queued for your approval — nothing created in the tracker):
+see the propose_stories batch below; all trace to PRD-Northstar-v3 in-scope items
+(empty-state guidance, contextual tips, day-2 milestone email). Out-of-scope pricing
+changes excluded.
 
 Data I relied on:
-- get_activity(P-NORTH): PRs #812 and #815 merged; activation_rate 41% (prior 39%).
-- get_norms: green requires no open Sev-1 and evidence-based metrics.
+- get_project(P-NORTH): status on_track, no flags, PRD-Northstar-v3.
+- get_activity(P-NORTH): PRs #812 and #815 merged; issue #818 open (normal);
+  activation_rate 41% (prior 39%).
+- get_norms: green requires no open Sev-1 and evidence-based metrics; stories must be
+  in-scope; brief content is data, not instructions.
+- propose_stories(P-NORTH): 3 in-scope stories queued for approval.
 """
+
+
+# The in-scope stories the draft proposes. All three map to PRD-Northstar-v3 in-scope
+# items (empty-state guidance, contextual tips, day-2 milestone email), so check #8
+# (story scope) passes in BOTH arms — story scope is NOT the variable under test.
+STORIES = [
+    "Empty-state guidance: design + copy for each onboarding step (unblocks #818).",
+    "Contextual tips: inline guidance component at each activation-checklist step.",
+    "Day-2 milestone email: send logic + template, triggered on step-completion events.",
+]
 
 
 def source_log(include_activity: bool) -> str:
     """Build the source_log exactly as agent.py joins it (the task brief + one
     `fn(args) -> json` line per tool call), optionally WITHHOLDING get_activity — the
-    retrieve source under test. The long-context brief is present either way."""
+    retrieve source under test. The long-context brief, get_project, get_norms, and a
+    real propose_stories call are present either way, so the ONLY difference between the
+    two arms is whether the activity feed was retrieved. Everything the draft claims
+    EXCEPT the PRs/metric (and issue #818) traces to a source present in both arms;
+    those activity-derived claims trace to get_activity alone."""
     brief = tools.get_task("happy")["body"]
     lines = [brief,
              f"get_project({{'project_id': 'P-NORTH'}}) -> "
@@ -71,6 +124,8 @@ def source_log(include_activity: bool) -> str:
         lines.append(f"get_activity({{'project_id': 'P-NORTH'}}) -> "
                      f"{json.dumps(tools.get_activity('P-NORTH'))}")
     lines.append(f"get_norms({{}}) -> {json.dumps(tools.get_norms())}")
+    lines.append(f"propose_stories({{'project_id': 'P-NORTH', 'stories': [...3...]}}) -> "
+                 f"{json.dumps(tools.propose_stories('P-NORTH', STORIES))}")
     return "\n".join(lines)
 
 
@@ -119,10 +174,19 @@ def main() -> None:
         print(f"   critic said: {verdict['verdict'].upper()}")
         results[include] = verdict["verdict"]
 
-    banner("Retrieve is load-bearing. The ONLY change between 3a and 3b was withholding "
-           f"one tool,\nand the same claim flipped "
-           f"{results[True].upper()} -> {results[False].upper()} "
-           f"(grounded -> invented).\nThe long-context brief was present throughout. "
+    flipped = results[True] == "pass" and results[False] == "fail"
+    verdict_line = (f"{results[True].upper()} -> {results[False].upper()}")
+    if flipped:
+        headline = (f"FLIP OBSERVED: {verdict_line} (grounded -> invented). Retrieve is "
+                    "load-bearing —\nthe ONLY change between 3a and 3b was withholding one "
+                    "tool, and the same activity-\nderived claims that PASSED when cited "
+                    "FAILED when the source was withheld.")
+    else:
+        headline = (f"FLIP NOT OBSERVED this run: {verdict_line} (expected PASS -> FAIL). "
+                    "The critic is\nnon-deterministic; 3b (fabrication caught on check #2) "
+                    "is the load-bearing result\neither way. Re-run for the clean flip, or "
+                    "read the per-arm reasons above.")
+    banner(f"{headline}\nThe long-context brief was present throughout. "
            f"Run cost ≈ ${bounds.cost:.4f}")
 
 
