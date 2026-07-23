@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cortex, a PM Chief-of-Staff Agent, Pitch</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap');
+:root{--bg:#07162C;--fg:#e8e8f0;--muted:#8899bb;--accent:#60a5fa;--accent2:#79c0ff;--line:rgba(255,255,255,0.08);--card:rgba(255,255,255,0.035)}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:'Lato',-apple-system,BlinkMacSystemFont,sans-serif;min-height:100vh;overflow-x:hidden;position:relative}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(96,165,250,0.10) 0%,transparent 60%),radial-gradient(ellipse 60% 40% at 90% 90%,rgba(124,140,255,0.08) 0%,transparent 60%);pointer-events:none;z-index:0}
+main{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:80px 40px 0}
+h1,h2,h3{font-family:'Poppins',sans-serif;letter-spacing:-0.01em;margin:0}
+a{color:var(--accent);text-decoration:none}
+code{font-family:'IBM Plex Mono',monospace}
+.hero{text-align:center;margin-bottom:100px}
+.hero .badge{display:inline-block;font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:900;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent2);background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.30);border-radius:999px;padding:6px 14px;margin-bottom:26px}
+.hero h1{font-size:clamp(42px,7vw,80px);font-weight:900;line-height:1.02;margin:0 0 22px;background:linear-gradient(135deg,#ffffff 0%,#79c0ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{font-size:clamp(18px,2.2vw,26px);color:#cdd5e3;max-width:760px;margin:0 auto 30px;line-height:1.5}
+.hero .meta{font-family:'Poppins',sans-serif;font-size:13.5px;color:var(--muted);letter-spacing:0.06em;margin:0 0 30px}
+.hero .ctas{display:inline-flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.hero .cta{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#fff;padding:13px 28px;border-radius:999px;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px;box-shadow:0 10px 30px rgba(96,165,250,0.30);transition:transform 0.15s,box-shadow 0.15s}
+.hero .cta:hover{transform:translateY(-2px);box-shadow:0 14px 36px rgba(96,165,250,0.40)}
+.hero .cta.secondary{background:transparent;border:1px solid var(--line);color:var(--fg);box-shadow:none}
+section.block{margin-bottom:100px}
+.eyebrow{font-family:'Poppins',sans-serif;font-size:11px;font-weight:900;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px}
+.block h2{font-size:clamp(30px,4vw,46px);font-weight:800;margin:0 0 12px;color:#fff}
+.block .lede{font-size:16px;color:var(--muted);margin:0 0 36px;max-width:680px;line-height:1.55}
+.modules-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px}
+.m-card{background:var(--card);border:1px solid color-mix(in srgb,var(--col) 40%,transparent);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.m-card .m-head{padding:18px 22px;background:linear-gradient(135deg,color-mix(in srgb,var(--col) 18%,transparent) 0%,transparent 70%);border-bottom:1px solid color-mix(in srgb,var(--col) 25%,transparent)}
+.m-card .m-num{font-family:'Poppins',sans-serif;font-size:26px;font-weight:900;line-height:1;color:var(--col);margin-bottom:5px}
+.m-card .m-num .m-emoji{font-size:22px;margin-left:4px}
+.m-card .m-name{font-family:'Poppins',sans-serif;font-size:17px;font-weight:800;color:#fff}
+.m-card .m-body{padding:14px 22px 18px}
+.m-card .m-link{display:flex;align-items:center;gap:8px;font-size:13px;color:#cdd5e3;margin:8px 0;text-decoration:none}
+.m-card .m-link code{font-size:11.5px;background:rgba(255,255,255,0.05);padding:2px 8px;border-radius:6px;color:#cdd5e3}
+.m-card .m-link:hover code{background:rgba(255,255,255,0.10);color:#fff}
+.m-card .m-link.missing{opacity:0.42;font-style:italic}
+.m-card .m-arrow{color:var(--col);font-weight:800}
+.exec-rail{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.exec-card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 22px}
+.exec-card .exec-step{display:inline-block;font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:900;letter-spacing:0.16em;text-transform:uppercase;color:var(--accent2);margin-bottom:10px}
+.exec-card h3{font-size:15px;font-weight:800;color:#fff;margin:0 0 12px}
+.exec-card .exec-body{font-size:12.5px;color:#cdd5e3;line-height:1.6}
+.exec-card .exec-body em{color:var(--muted)}
+.insights-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.insight{background:var(--card);border:1px solid;border-radius:14px;padding:24px 26px}
+.insight .ic-label{font-family:'Poppins',sans-serif;font-size:10.5px;font-weight:900;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:12px}
+.insight h3{font-size:17px;font-weight:800;margin:0;color:#fff;line-height:1.45}
+.loom-wrap{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px;text-align:center;margin-bottom:60px}
+.loom-wrap a{display:inline-flex;align-items:center;gap:10px;background:rgba(124,140,255,0.10);border:1px solid rgba(124,140,255,0.30);color:#bcb1ff;padding:13px 26px;border-radius:999px;font-family:'Poppins',sans-serif;font-weight:800;font-size:14px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:40px 20px;border-top:1px solid var(--line);margin-top:60px;letter-spacing:0.04em}
+@media(max-width:800px){.insights-row{grid-template-columns:1fr}main{padding:60px 24px 0}}
+</style>
+</head>
+<body>
+<main>
+  <section class="hero">
+    <span class="badge">Run Your AI Agent Team Certification</span>
+    <h1>Cortex, a PM Chief-of-Staff Agent</h1>
+    <p class="lead">A chief-of-staff agent that triages a PM task, pulls internal state, and preps a status update plus a story batch, so the team approves in two minutes instead of assembling from scratch.</p>
+    <p class="meta">Anastasiya Zdzitavetskaya · Advanced AI Agents · July 2026</p>
+    <div class="ctas"><a class="cta" href="https://github.com/AnastasiyaZ/pm-os-agent" target="_blank" rel="noopener">View the repo &rarr;</a></div>
+  </section>
+  <section class="block">
+    <div class="eyebrow">Module artifacts</div>
+    <h2>The 6 building blocks</h2>
+    <p class="lede">Six modules. Six artifacts. One coherent body of work that turns Cortex from a line on a page into a bounded, shippable agent.</p>
+    <div class="modules-grid"><div class="m-card" style="--col:#3b82f6"><div class="m-head"><div class="m-num">M1 <span class="m-emoji">&#x1F4CF;</span></div><div class="m-name">The Agent Line</div></div><div class="m-body"><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/01-agent-line/agent-line-map.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Agent-line map: <code>01-agent-line/agent-line-map.md</code></a></div></div><div class="m-card" style="--col:#fbbf24"><div class="m-head"><div class="m-num">M2 <span class="m-emoji">&#x1F501;</span></div><div class="m-name">Loop Engineering</div></div><div class="m-body"><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/02-loop-design/loop-spec.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Loop spec: <code>02-loop-design/loop-spec.md</code></a></div></div><div class="m-card" style="--col:#bcb1ff"><div class="m-head"><div class="m-num">M3 <span class="m-emoji">&#x1F9E9;</span></div><div class="m-name">Orchestration &amp; Subagents</div></div><div class="m-body"><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/03-orchestration/orchestration-map.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Orchestration map: <code>03-orchestration/orchestration-map.md</code></a></div></div><div class="m-card" style="--col:#34d399"><div class="m-head"><div class="m-num">M4 <span class="m-emoji">&#x1F9E0;</span></div><div class="m-name">Context Engineering &amp; Memory</div></div><div class="m-body"><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/04-memory-context/memory-and-context.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Memory &amp; context: <code>04-memory-context/memory-and-context.md</code></a></div></div><div class="m-card" style="--col:#f472b6"><div class="m-head"><div class="m-num">M5 <span class="m-emoji">&#x1F6E1;&#xFE0F;</span></div><div class="m-name">Bounds &amp; Evals</div></div><div class="m-body"><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/05-bounds-evals/bounds-and-evals.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Bounds &amp; evals: <code>05-bounds-evals/bounds-and-evals.md</code></a></div></div><div class="m-card" style="--col:#79c0ff"><div class="m-head"><div class="m-num">M6 <span class="m-emoji">&#x1F39A;&#xFE0F;</span></div><div class="m-name">Autonomy &amp; Production</div></div><div class="m-body"><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/06-autonomy/production-and-autonomy.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Production &amp; autonomy: <code>06-autonomy/production-and-autonomy.md</code></a><a class="m-link" href="https://github.com/AnastasiyaZ/pm-os-agent/blob/main/06-autonomy/prototype.md" target="_blank" rel="noopener"><span class="m-arrow">&rarr;</span> Prototype: <code>06-autonomy/prototype.md</code></a></div></div></div>
+  </section>
+  <section class="block">
+    <div class="eyebrow">Ship plan</div>
+    <h2>How I'd ship Cortex</h2>
+    <p class="lede">The autonomy dial per segment, where it sits on the trust ladder, how it deploys, what it returns, and how I keep it safe.</p>
+    <div class="exec-rail"><div class="exec-card"><div class="exec-step">01 &middot; Dial</div><h3>Autonomy per segment</h3><div class="exec-body">- Seasoned PM → Bounded-autonomous → trusts Cortex to assemble + queue; spot-checks, doesn't read each<br> - New eng lead → Supervised → approves every story-prep action at the checkpoint<br> - Exec stakeholder → Assisted → sees suggestions, acts manually in their own voice</div></div><div class="exec-card"><div class="exec-step">02 &middot; Ladder</div><h3>Rung + eval gate</h3><div class="exec-body">- Current rung: Supervised (every output waits for approval at the HITL checkpoint; with no publish tool, it structurally can't self-promote).<br> - Eval gate to climb to Bounded-autonomous: critic false-pass ≤2% (≤1% on the date-promise/false-green subset) AND confidentiality-leak rate = 0 AND human-override &lt;2% — held over a rolling 30-day / ≥50-run window on a ≥24-case labeled harness.<br> - Hard stop: miss any one → stay Supervised (evidence, not calendar); #8 company-wide post never crosses short of full autonomy.</div></div><div class="exec-card"><div class="exec-step">03 &middot; Deploy</div><h3>Where it runs &amp; who owns it</h3><div class="exec-body">- Runtime: GitHub Actions scheduled cron (Monday) + workflow_dispatch for manual/replay; ANTHROPIC_API_KEY as an encrypted secret, bounds pinned as workflow env. Scheduled, not hook-triggered — the load is one run a week, not bursty.<br> - On-call owner: named PM owner at Supervised, where nothing pages because nothing posts; named eng owner of agent.py for pipeline failures (bad key, connector down). Not &quot;the team.&quot; At Bounded this splits: eng halts machinery, PM adjudicates content.<br> - Rollback: disable the cron (off is instant — no write tool means no partial state to unwind), revert prompt/bounds to a known-good SHA, disable propose_stories to degrade to draft-only, or drop the dial a rung.<br>Monitoring: live critic pass %, escalation rate, cost-to-serve vs. the $0.50 cap, and trust incidents (leaks / false-greens = 0).</div></div><div class="exec-card"><div class="exec-step">04 &middot; ROI</div><h3>Value, not activity</h3><div class="exec-body">- Outcome: draft-accepted-without-substantive-edit rate (≥90% target), and ~30–45 min/week of PM assembly saved — both measured against the rung-1 shadow-mode baseline, not asserted.<br> - Cost-to-serve: fully-loaded $ per accepted update (model + tools + retries + human review) ≈ $5–8/run — ~97–99% of it the ~2-min human review; model+tools ~$0.05–0.18.<br> - Trust incidents: leaks / false-greens / unflagged bad dates = 0; any single one pauses autonomy expansion.</div></div><div class="exec-card"><div class="exec-step">05 &middot; Governance</div><h3>How I keep it safe</h3><div class="exec-body">- Compliance: embargoed roadmap items do enter the prompt (Cortex must read them to know what to exclude) — the control is they never reach the output, enforced by critic checks #3/#4 + the roadmap CONFIDENTIAL/warning field + norms. At Bounded this gains a dedicated pre-publish confidentiality scan, since the inline human is gone. No PII scrubber today (corpus is local reads); that's a connector-milestone control.<br>Safety: no world-acting tool exists — no post/create/merge — so &quot;post it&quot; is unsatisfiable by construction (a missing tool is the strongest bound); over-cap story batches are rejected, not split (cap 10); kill switch = Ctrl-C/SIGTERM + cost-cap auto-halt; JIT per-run read-only token lands with the first live connector.<br> - Reliability: cost cap $0.50 + iteration cap 8 + revision cap 2, each enforced outside the model; escalate-on-stuck (missing data → escalate, never fabricate); wall-clock timeout specced, ships with the connector.<br>Strategy: widen one segment at a time (the autonomy dial), evidence not calendar; build the ≥24-case labeled harness, then climb on higher-volume fleet tasks (activity triage, first-draft grooming) — the exec update may stay deliberately forever-Supervised.</div></div></div>
+  </section>
+  <section class="block">
+    <div class="eyebrow">Build insights</div>
+    <h2>What I learned</h2>
+    <p class="lede">The honest three: where it hurt, what clicked, and the moment something changed.</p>
+    <div class="insights-row"><div class="insight" style="border-color:rgba(248,113,113,0.40)"><div class="ic-label" style="color:#f87171">&#x1F635; Friction</div><h3>The hard part was never the code — it was design under uncertainty. Many data sources × different sensitivity levels means the real work is up front: defining bounds, anticipating failure modes, engineering so a confused run can't do something irreversible.</h3></div><div class="insight" style="border-color:rgba(96,165,250,0.40)"><div class="ic-label" style="color:#60a5fa">&#x1F9E0; Learning</div><h3>Start small, expand on evidence. Few tasks, few sources, all reads — a blast radius small enough to reason about completely. Widen scope only after the smaller version proves it behaves.</h3></div><div class="insight" style="border-color:rgba(251,191,36,0.40)"><div class="ic-label" style="color:#fbbf24">&#x1F4A1; Aha</div><h3>Pulling confidentiality out as its own decision — instead of averaging it into &quot;what context is relevant&quot; — is what made the real risk visible. And visible is the precondition for controllable.</h3></div></div>
+  </section>
+
+  <footer>Anastasiya Zdzitavetskaya · Advanced AI Agents · July 2026 &middot; Certification submission &middot; Run Your AI Agent Team</footer>
+</main>
+</body>
+</html>
