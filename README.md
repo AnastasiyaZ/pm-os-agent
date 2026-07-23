@@ -10,11 +10,11 @@ This is a **template repo**. Click **Use this template → Create a new reposito
 
 | # | Deliverable | Module | Status | File |
 |---|---|---|---|---|
-| 1 | **Working agent demo** (real run screenshots; link optional) | Built across labs | ◑ draft (happy-path trace captured) | `06-autonomy/prototype.md` |
-| 2 | **Loop Spec** | M2 | ◑ draft | `02-loop-design/loop-spec.md` |
-| 3 | **Orchestration Map** | M3 | ◑ draft | `03-orchestration/orchestration-map.md` |
-| 4 | **Insights: build process** | M6 | ☐ scaffolded — needs your voice | `06-autonomy/build-insights.md` |
-| 5 | **Insights: bounds, trust & autonomy strategy** | M6 | ◑ draft | `06-autonomy/governance-and-strategy.md` |
+| 1 | **Working agent demo** (real run screenshots; link optional) | Built across labs | ✅ Done | `06-autonomy/prototype.md` |
+| 2 | **Loop Spec** | M2 | ✅ Done | `02-loop-design/loop-spec.md` |
+| 3 | **Orchestration Map** | M3 | ✅ Done | `03-orchestration/orchestration-map.md` |
+| 4 | **Insights: build process** | M6 | ✅ Done | `06-autonomy/build-insights.md` |
+| 5 | **Insights: bounds, trust & autonomy strategy** | M6 | ✅ Done | `06-autonomy/governance-and-strategy.md` |
 
 ## The agent in one sentence
 
